@@ -9,17 +9,17 @@ import 'zone.js/dist/jasmine-patch';
 import 'zone.js/dist/async-test';
 import 'zone.js/dist/fake-async-test';
 
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { Component, DebugElement, NgModule } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import {
 	BrowserDynamicTestingModule,
 	platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
-import { By } from '@angular/platform-browser';
 
-import { Component, NgModule, DebugElement } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { DateValueAccessorModule } from './module';
 import { DateValueAccessor } from './date-value-accessor';
+import { DateValueAccessorModule } from './module';
 
 TestBed.initTestEnvironment(
 	BrowserDynamicTestingModule,
@@ -29,18 +29,15 @@ TestBed.initTestEnvironment(
 @Component({
 	template: `
   <form>
-    <input type="text" name="test0" [(ngModel)]="test">
     <input type="date" name="normalInput" [(ngModel)]="testDate1">
     <input type="date" name="fixedInput" [(ngModel)]="testDate2" useValueAsDate>
   </form>`
 })
 export class TestFormComponent {
-	test: string;
 	testDate1: Date;
 	testDate2: Date;
 
 	constructor() {
-		this.test = 'Hello NG2';
 		this.testDate1 = new Date('2016-07-22');
 		this.testDate2 = new Date('2016-09-15');
 	}
@@ -65,7 +62,9 @@ function dispatchEvent(
 }
 
 describe('DateValueAccessor', () => {
+	const dateString = new Date().toISOString().substring(0, 10);
 	let fixture: ComponentFixture<TestFormComponent>;
+	let component: TestFormComponent;
 
 	beforeEach(
 		async(() => {
@@ -74,6 +73,7 @@ describe('DateValueAccessor', () => {
 			});
 
 			fixture = TestBed.createComponent(TestFormComponent);
+			component = fixture.componentInstance;
 			fixture.detectChanges();
 		})
 	);
@@ -91,14 +91,16 @@ describe('DateValueAccessor', () => {
 			expect(normalInput.nativeElement.value).toBe('');
 		});
 
-		it('should populate simple strings on change', done => {
-			dispatchEvent(normalInput.nativeElement, fixture, '2016-09-30').then(
-				() => {
-					expect(fixture.componentInstance.testDate1).toEqual('2016-09-30');
-					done();
-				}
-			);
-		});
+		it(
+			'should populate simple strings on change',
+			async(() => {
+				dispatchEvent(normalInput.nativeElement, fixture, dateString).then(
+					() => {
+						expect(component.testDate1 as any).toEqual(dateString);
+					}
+				);
+			})
+		);
 	});
 
 	describe('with the "useValueAsDate" attribute', () => {
@@ -111,21 +113,21 @@ describe('DateValueAccessor', () => {
 		);
 
 		it('should fix date input controls to bind on dates', () => {
-			expect(fixedInput.nativeElement.value).toBe('2016-09-15');
-		});
-
-		it('should also populate dates (instead of strings) on change', done => {
-			dispatchEvent(fixedInput.nativeElement, fixture, '2016-10-01').then(
-				() => {
-					expect(fixture.componentInstance.testDate2).toEqual(
-						jasmine.any(Date)
-					);
-					expect(fixture.componentInstance.testDate2).toEqual(
-						new Date('2016-10-01')
-					);
-					done();
-				}
+			expect(fixedInput.nativeElement.value).toBe(
+				component.testDate2.toISOString().substring(0, 10)
 			);
 		});
+
+		it(
+			'should also populate dates (instead of strings) on change',
+			async(() => {
+				dispatchEvent(fixedInput.nativeElement, fixture, dateString).then(
+					() => {
+						expect(component.testDate2).toEqual(jasmine.any(Date));
+						expect(component.testDate2).toEqual(new Date(dateString));
+					}
+				);
+			})
+		);
 	});
 });

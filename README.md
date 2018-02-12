@@ -1,6 +1,6 @@
 # DateValueAccessor for Angular
 
-[![NPM version][npm-image]][npm-url]
+[![Build Status](https://travis-ci.org/gastro-instruments/angular-date-value-accessor.svg?branch=master)](https://travis-ci.org/gastro-instruments/angular-date-value-accessor)
 
 A custom value accessor for Angular 5.  
 Now you can use JavaScript Date objects directly with two-way data bindings (ngModel) as well as with reactive forms (formControlName/formControl).
@@ -26,7 +26,8 @@ OR
 Download the package via NPM:
 
 ```bash
-npm install --save angular-date-value-accessor
+yarn add @gi/angular-date-value-accessor
+npm install --save @gi/angular-date-value-accessor
 ```
 
 Then import the module via NgModule:
@@ -34,7 +35,7 @@ Then import the module via NgModule:
 ```js
 // app.module.ts
 
-import { DateValueAccessorModule } from 'angular-date-value-accessor';
+import { DateValueAccessorModule } from '@gi/angular-date-value-accessor';
 
 @NgModule({
 	imports: [DateValueAccessorModule]
@@ -46,6 +47,3 @@ export class AppModule {}
 
 There is a demo at:
 http://johanneshoppe.github.io/angular-date-value-accessor/
-
-[npm-url]: https://npmjs.org/package/angular-date-value-accessor
-[npm-image]: https://badge.fury.io/js/angular-date-value-accessor.svg
