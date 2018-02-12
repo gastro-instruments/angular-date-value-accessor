@@ -33,6 +33,12 @@ module.exports = function(config) {
 		logLevel: config.LOG_INFO,
 		autoWatch: false,
 		browsers: ['ChromeHeadless'],
+		customLaunchers: {
+			ChromeHeadlessNoSandbox: {
+				base: 'ChromeHeadless',
+				flags: ['--no-sandbox']
+			}
+		},
 		singleRun: true
 	});
 };
